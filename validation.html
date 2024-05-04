@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Custom styles */
+    body {
+      background-color: hsla(30, 100%, 86%, 0.851); /* Light orange */
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container form-container">
+    <h2 class="text-center">Registration Form</h2>
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter name" required>
+        <small id="nameError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="rollno">Rollno</label>
+        <input type="text" class="form-control" id="rollno" placeholder="Enter rollno" required disabled>
+        <small id="rollnoError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="collegeMail">College mail-id</label>
+        <input type="email" class="form-control" id="collegeMail" placeholder="Enter College mail-id" required disabled>
+        <small id="collegeMailError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="contactNo">Contact No</label>
+        <input type="tel" class="form-control" id="contactNo" placeholder="Enter Contact No" required disabled>
+        <small id="contactNoError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label><br>
+        <input type="radio" name="gender" value="male" required disabled> Male<br>
+        <input type="radio" name="gender" value="female" required disabled> Female<br>
+        <input type="radio" name="gender" value="others" required disabled> Others<br>
+        <small id="genderError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="department">Department</label><br>
+        <select class="form-control" id="department" name="department" required disabled>
+          <option value="">Select Department</option>
+          <option value="AIDS">AIDS</option>
+          <option value="CHEMICAL">CHEMICAL</option>
+          <option value="MECHANICAL">MECHANICAL</option>
+          <option value="CSE">CSE</option>
+          <option value="IT">IT</option>
+        </select>
+        <small id="departmentError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="events">Events</label><br>
+        <input type="checkbox" value="Code Mania" disabled> Code Mania<br>
+        <input type="checkbox" value="Paper presentation" disabled> Paper presentation<br>
+        <input type="checkbox" value="Project presentation" disabled> Project presentation<br>
+        <input type="checkbox" value="Speak up" disabled> Speak up<br>
+        <input type="checkbox" value="Connectathon" disabled> Connectathon<br>
+        <small id="eventsError" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="registrationFee">Registration fee</label><br>
+        <select class="form-control" id="registrationFee" name="registrationFee" required disabled>
+          <option value="">Select Registration Fee</option>
+          <option value="CodeMania">Code Mania (Rs.150)</option>
+          <option value="PaperPresentation">Paper Presentation (Rs.200)</option>
+          <option value="ProjectPresentation">Project Presentation (Rs.200)</option>
+          <option value="SpeakUp">Speak Up (Rs.100)</option>
+          <option value="Connectathon">Connectathon (Rs.150)</option>
+          <option value="Combo">Combo (Rs.450)</option>
+        </select>
+        <small id="registrationFeeError" class="text-danger"></small>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="validateForm()">Submit</button>
+    </form>
+    <div id="displayInfo" style="display:none;">
+      <!-- Display submitted information here -->
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Function to enable the next field and focus it
+      function enableNextField(currentField, nextField) {
+        if (currentField.value.trim() === "") {
+          alert(currentField.placeholder + " field is required");
+          currentField.focus();
+        } else {
+          nextField.removeAttribute('disabled');
+          nextField.focus();
+        }
+      }
+
+      // Add event listeners for blur events on input fields
+      document.getElementById('username').addEventListener('blur', function() {
+        enableNextField(this, document.getElementById('rollno'));
+      });
+
+      document.getElementById('rollno').addEventListener('blur', function() {
+        enableNextField(this, document.getElementById('collegeMail'));
+      });
+
+      document.getElementById('collegeMail').addEventListener('blur', function() {
+        enableNextField(this, document.getElementById('contactNo'));
+      });
+
+      document.getElementById('contactNo').addEventListener('blur', function() {
+        var contactNo = this.value.trim();
+        if (contactNo === "") {
+          alert("Contact No field is required");
+          this.focus();
+        } else if (contactNo.length !== 10) {
+          alert("Phone number should be 10 characters long");
+          this.focus();
+        } else {
+          var genderRadios = document.querySelectorAll('input[name="gender"]');
+          genderRadios.forEach(function(radio) {
+            radio.removeAttribute('disabled');
+          });
+          genderRadios[0].focus();
+        }
+      });
+
+      // Add event listener for blur event on gender radio buttons
+      var genderRadioButtons = document.querySelectorAll('input[name="gender"]');
+      genderRadioButtons.forEach(function(radioButton) {
+        radioButton.addEventListener('blur', function() {
+          var isChecked = false;
+          genderRadioButtons.forEach(function(radio) {
+            if (radio.checked) {
+              isChecked = true;
+            }
+          });
+          if (!isChecked) {
+            alert("Gender field is required");
+          }
+        });
+      });
+
+      // Add event listener for change event on gender radio buttons to enable the next field
+      genderRadioButtons.forEach(function(radioButton) {
+        radioButton.addEventListener('change', function() {
+          document.getElementById('department').removeAttribute('disabled');
+          document.getElementById('department').focus();
+        });
+      });
+
+      // Add event listener for change event on department select
+      document.getElementById('department').addEventListener('change', function() {
+        var eventsCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        eventsCheckboxes.forEach(function(checkbox) {
+          checkbox.removeAttribute('disabled');
+        });
+        eventsCheckboxes[0].focus();
+      });
+
+      // Add event listener for change event on events checkboxes
+      var eventsCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+      eventsCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+          var selectedEvents = document.querySelectorAll('input[type="checkbox"]:checked');
+          if (selectedEvents.length > 0) {
+            document.getElementById('registrationFee').removeAttribute('disabled');
+            document.getElementById('registrationFee').focus();
+          }
+        });
+      });
+
+      // Add event listener for change event on registration fee select
+      document.getElementById('registrationFee').addEventListener('change', function() {
+        // Add any additional logic here if needed
+      });
+    });
+
+    function validateForm() {
+      var name = document.getElementById('username').value.trim();
+      var rollno = document.getElementById('rollno').value.trim();
+      var collegeMail = document.getElementById('collegeMail').value.trim();
+      var contactNo = document.getElementById('contactNo').value.trim();
+      var gender = document.querySelector('input[name="gender"]:checked');
+      var department = document.getElementById('department').value;
+      var events = document.querySelectorAll('input[type="checkbox"]:checked');
+      var registrationFee = document.getElementById('registrationFee').value;
+
+      var isValid = true;
+
+      if (name === "") {
+        document.getElementById('nameError').innerText = "Name field is required";
+        isValid = false;
+      } else {
+        document.getElementById('nameError').innerText = "";
+      }
+
+      if (rollno === "") {
+        document.getElementById('rollnoError').innerText = "Rollno field is required";
+        isValid = false;
+      } else {
+        document.getElementById('rollnoError').innerText = "";
+      }
+
+      if (collegeMail === "") {
+        document.getElementById('collegeMailError').innerText = "College mail-id field is required";
+        isValid = false;
+      } else {
+        document.getElementById('collegeMailError').innerText = "";
+      }
+
+      if (contactNo === "") {
+        document.getElementById('contactNoError').innerText = "Contact No field is required";
+        isValid = false;
+      } else if (contactNo.length < 10) {
+        alert("Phone number should not be less than 10 characters");
+        document.getElementById('contactNoError').innerText = "Phone should not be less than 10 characters";
+        isValid = false;
+      } else if (contactNo.length > 10) {
+        document.getElementById('contactNoError').innerText = "Phone should not be more than 10 characters";
+        isValid = false;
+      } else {
+        document.getElementById('contactNoError').innerText = "";
+      }
+
+      if (!gender) {
+        document.getElementById('genderError').innerText = "Gender field is required";
+        isValid = false;
+      } else {
+        document.getElementById('genderError').innerText = "";
+      }
+
+      if (department === "") {
+        document.getElementById('departmentError').innerText = "Department field is required";
+        isValid = false;
+      } else {
+        document.getElementById('departmentError').innerText = "";
+      }
+
+      if (events.length === 0) {
+        document.getElementById('eventsError').innerText = "Events field is required";
+        isValid = false;
+      } else {
+        document.getElementById('eventsError').innerText = "";
+      }
+
+      if (registrationFee === "") {
+        document.getElementById('registrationFeeError').innerText = "Registration fee field is required";
+        isValid = false;
+      } else {
+        document.getElementById('registrationFeeError').innerText = "";
+      }
+
+      if (isValid) {
+        displayFormData();
+      }
+    }
+
+    function displayFormData() {
+      var formData = {
+        name: document.getElementById('username').value.trim(),
+        rollno: document.getElementById('rollno').value.trim(),
+        collegeMail: document.getElementById('collegeMail').value.trim(),
+        contactNo: document.getElementById('contactNo').value.trim(),
+        gender: document.querySelector('input[name="gender"]:checked').value,
+        department: document.getElementById('department').value,
+        events: getSelectedEvents(),
+        registrationFee: document.getElementById('registrationFee').value
+      };
+
+      // Display submitted information
+      var displayInfo = document.getElementById('displayInfo');
+      displayInfo.innerHTML = "<h2>Submitted Information</h2>";
+      displayInfo.innerHTML += "<p><strong>Name:</strong> " + formData.name + "</p>";
+      displayInfo.innerHTML += "<p><strong>Rollno:</strong> " + formData.rollno + "</p>";
+      displayInfo.innerHTML += "<p><strong>College Mail:</strong> " + formData.collegeMail + "</p>";
+      displayInfo.innerHTML += "<p><strong>Contact No:</strong> " + formData.contactNo + "</p>";
+      displayInfo.innerHTML += "<p><strong>Gender:</strong> " + formData.gender + "</p>";
+      displayInfo.innerHTML += "<p><strong>Department:</strong> " + formData.department + "</p>";
+      displayInfo.innerHTML += "<p><strong>Events:</strong> " + formData.events.join(", ") + "</p>";
+      displayInfo.innerHTML += "<p><strong>Registration Fee:</strong> " + formData.registrationFee + "</p>";
+      
+      // Show the displayInfo div
+      displayInfo.style.display = "block";
+    }
+
+    function getSelectedEvents() {
+      var events = document.querySelectorAll('input[type="checkbox"]:checked');
+      var selectedEvents = [];
+      events.forEach(function(event) {
+        selectedEvents.push(event.value);
+      });
+      return selectedEvents;
+    }
+  </script>
+</body>
+</html>
